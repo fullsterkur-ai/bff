@@ -1,8 +1,9 @@
 import mongoose from 'mongoose'
 import { Request, Response, NextFunction } from 'express'
 import createResponse from '../utils/createResponse'
-import { StatusCodes, ReasonPhrases } from 'http-status-codes'
+import { StatusCodes } from 'http-status-codes'
 import userService from '../services/user.service'
+import { User } from '../models/user.model'
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,7 +16,11 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    return createResponse(res, StatusCodes.OK, {})
+    const { name, email, password } = req.body
+    if (!name || !email || !password)
+      return createResponse(res, StatusCodes.BAD_REQUEST, 'name, email, and password are required')
+    const user = await userService.createUser(new User({ name, email, password }))
+    return createResponse(res, StatusCodes.OK, { user })
   } catch (error) {
     next(error)
   }

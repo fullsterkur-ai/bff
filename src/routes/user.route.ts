@@ -6,13 +6,14 @@ import {
   getUsers,
   updateUser,
 } from '../controllers/user.controller'
+import { adminProtected, protect } from '../middlewares/auth.middleware'
 
 const router = Router()
 
-router.get('/', getUsers)
+router.get('/', protect, adminProtected, getUsers)
 router.post('/', createUser)
-router.get('/:id', getUser)
-router.patch('/:id', updateUser)
-router.delete('/:id', deleteUser)
+router.get('/:id', protect, adminProtected, getUser)
+router.patch('/:id', protect, adminProtected, updateUser)
+router.delete('/:id', protect, adminProtected, deleteUser)
 
 export default router

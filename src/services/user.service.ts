@@ -1,12 +1,12 @@
 import readline from 'readline/promises'
 import { User, UserRole } from '../models/user.model'
 import { logger } from '../core/logger'
-import { hashPassword } from './auth.service'
+import authService from './auth.service'
 import mongoose from 'mongoose'
 import NotImplementedError from '../errors/NotImplementedError'
 
 const createUser = async (user: InstanceType<typeof User>) => {
-  user.password = await hashPassword(user.password)
+  user.password = await authService.hashPassword(user.password)
   await User.insertOne(user)
   logger.debug(`Created user`, { user })
 }

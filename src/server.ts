@@ -3,20 +3,23 @@ import os from 'os'
 import express, { NextFunction, Request, Response } from 'express'
 import { logger, httpLogger } from './core/logger'
 import createResponse from './utils/createResponse'
-
-import userRouter from './routes/user.route'
 import { StatusCodes } from 'http-status-codes'
 import NotImplementedError from './errors/NotImplementedError'
+
+import userRouter from './routes/user.route'
+import authRouter from './routes/auth.route'
 
 const app = express()
 
 app.use(httpLogger)
+app.use(express.json())
 
 app.get('/', (_req: Request, res: Response) =>
   createResponse(res, StatusCodes.OK, 'BFF operational'),
 )
 
 app.use('/users', userRouter)
+app.use('/auth', authRouter)
 
 app.use((_req: Request, res: Response, _next: NextFunction) =>
   createResponse(res, StatusCodes.NOT_FOUND, 'Route not found'),
@@ -24,6 +27,8 @@ app.use((_req: Request, res: Response, _next: NextFunction) =>
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof NotImplementedError)
     return createResponse(res, StatusCodes.NOT_IMPLEMENTED, err.message)
+  if (err instanceof SyntaxError)
+    return createResponse(res, StatusCodes.BAD_REQUEST, err.message)
   logger.error(err.stack)
   createResponse(res, StatusCodes.INTERNAL_SERVER_ERROR, 'Internal server error')
 })
