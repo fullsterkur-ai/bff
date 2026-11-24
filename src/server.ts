@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import os from 'os'
 import express, { NextFunction, Request, Response } from 'express'
+import cors from 'cors'
 import { logger, httpLogger } from './core/logger'
 import createResponse from './utils/createResponse'
 import { StatusCodes } from 'http-status-codes'
@@ -11,6 +12,11 @@ import authRouter from './routes/auth.route'
 
 const app = express()
 
+app.use(
+  cors({
+    origin: (process.env.CORS_ORIGIN ?? '').replace(/\s+/g, '').split(','),
+  }),
+)
 app.use(httpLogger)
 app.use(express.json())
 
