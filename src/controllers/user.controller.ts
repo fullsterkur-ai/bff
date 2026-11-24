@@ -41,6 +41,18 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
+export const getMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.user?.id.toString()
+    const user = await userService.getUserById(new mongoose.mongo.ObjectId(id))
+    if (!user) return createResponse(res, StatusCodes.NOT_FOUND, 'User not found')
+
+    return createResponse(res, StatusCodes.OK, user)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id.toString()
@@ -55,12 +67,34 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.user?.id.toString()
+    const user = await userService.updateUserById(new mongoose.mongo.ObjectId(id))
+    if (!user) return createResponse(res, StatusCodes.NOT_FOUND, 'User not found')
+    return createResponse(res, StatusCodes.OK, user)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id.toString()
     if (!mongoose.isValidObjectId(id))
       return createResponse(res, StatusCodes.BAD_REQUEST, 'Invalid id')
 
+    const user = await userService.deleteUserById(new mongoose.mongo.ObjectId(id))
+    if (!user) return createResponse(res, StatusCodes.NOT_FOUND, 'User not found')
+    return createResponse(res, StatusCodes.OK, user)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deleteMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.user?.id.toString()
     const user = await userService.deleteUserById(new mongoose.mongo.ObjectId(id))
     if (!user) return createResponse(res, StatusCodes.NOT_FOUND, 'User not found')
     return createResponse(res, StatusCodes.OK, user)

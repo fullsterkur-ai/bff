@@ -27,8 +27,7 @@ app.use((_req: Request, res: Response, _next: NextFunction) =>
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof NotImplementedError)
     return createResponse(res, StatusCodes.NOT_IMPLEMENTED, err.message)
-  if (err instanceof SyntaxError)
-    return createResponse(res, StatusCodes.BAD_REQUEST, err.message)
+  if (err instanceof SyntaxError) return createResponse(res, StatusCodes.BAD_REQUEST, err.message)
   logger.error(err.stack)
   createResponse(res, StatusCodes.INTERNAL_SERVER_ERROR, 'Internal server error')
 })
