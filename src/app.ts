@@ -2,6 +2,7 @@ import 'dotenv/config'
 import os from 'os'
 import express, { Request, Response } from 'express'
 import { logger, httpLogger } from './core/logger'
+import connectDB from './config/db'
 
 const app = express()
 
@@ -11,6 +12,8 @@ app.get('/', (_req: Request, res: Response) => res.json(1))
 
 const start = async (): Promise<void> => {
   const SERVER_PORT = process.env.SERVER_PORT
+
+  await connectDB()
 
   logger.info('Starting server...')
   app.listen(SERVER_PORT, () => {
