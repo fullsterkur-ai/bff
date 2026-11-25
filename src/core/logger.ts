@@ -1,20 +1,18 @@
-// logger.js
-const winston = require('winston');
-const morgan = require('morgan');
+import winston from 'winston'
+import morgan from 'morgan'
 
 const devFormat = winston.format.combine(
   winston.format.timestamp({ format: 'HH:mm:ss' }),
   winston.format.colorize(),
-  winston.format.printf(({ timestamp, level, message, ...meta }) => {
-    const extras = Object.keys(meta).length ? JSON.stringify(meta, null, 2) : '';
-    return `[${timestamp}] ${level}: ${message} ${extras}`;
-  })
-);
+  winston.format.printf(
+    ({ timestamp, level, message, ...meta }: winston.Logform.TransformableInfo) => {
+      const extras = Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''
+      return `[${timestamp}] ${level}: ${message} ${extras}`
+    },
+  ),
+)
 
-const prodFormat = winston.format.combine(
-  winston.format.timestamp(),
-  winston.format.json()
-);
+const prodFormat = winston.format.combine(winston.format.timestamp(), winston.format.json())
 
 const logger = winston.createLogger({
   levels: { ...winston.config.npm.levels, http: 5 },
@@ -25,12 +23,12 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
     new winston.transports.File({ filename: 'logs/app.log' }),
   ],
-});
+})
 
 const httpLogger = morgan('dev', {
   stream: {
-    write: (message) => logger.http(message.trim())
-  }
-});
+    write: (message: string) => logger.http(message.trim()),
+  },
+})
 
-module.exports = { logger, httpLogger };
+export { logger, httpLogger }
