@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
     "start": "tsx src/app.ts",
     "dev": "node --watch --import tsx src/app.ts",
     "build": "tsc",
     "start:prod": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "format:check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,scss,html}\"",
     "format:apply": "npx prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,html}\"",
-    "format:check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,scss,html}\""
+    "lint:check": "eslint .",
+    "lint:apply": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -29,14 +32,19 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^26.6.6",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
     "prettier": "^3.10.1",
     "tsx": "^4.19.4",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.74.0"
   }
 }

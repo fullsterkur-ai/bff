@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import os from 'os'
-import express, { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import cors from 'cors'
 import { logger, httpLogger } from './core/logger'
 import createResponse from './utils/createResponse'

@@ -1,9 +1,10 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import createResponse from '../utils/createResponse'
 import { StatusCodes, ReasonPhrases } from 'http-status-codes'
-import { AuthUser } from '../types/express'
+import type { AuthUser } from '../types/express'
 import { UserRole } from '../models/user.model'
+import authService from '../services/auth.service'
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   const authorization = req.headers.authorization
@@ -16,10 +17,11 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     return createResponse(res, StatusCodes.UNAUTHORIZED, ReasonPhrases.UNAUTHORIZED)
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!)
+    if (!process.env.JWT_SECRET) return authService.ensureJwtSecret()
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = decoded as AuthUser
     next()
-  } catch (error) {
+  } catch {
     return createResponse(res, StatusCodes.UNAUTHORIZED, ReasonPhrases.UNAUTHORIZED)
   }
 }

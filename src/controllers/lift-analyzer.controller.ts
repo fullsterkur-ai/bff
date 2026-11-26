@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import liftAnalyzerService from '../services/lift-analyzer.service'
 import createResponse from '../utils/createResponse'
 import { StatusCodes } from 'http-status-codes'

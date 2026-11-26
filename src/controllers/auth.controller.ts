@@ -1,9 +1,7 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import createResponse from '../utils/createResponse'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
+import { StatusCodes } from 'http-status-codes'
 import authService from '../services/auth.service'
-import NotFoundError from '../errors/NotFoundError'
-import UnauthorizedError from '../errors/UnauthorizedError'
 import AppError from '../errors/AppError'
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {

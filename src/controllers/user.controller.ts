@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import createResponse from '../utils/createResponse'
 import { StatusCodes } from 'http-status-codes'
 import userService from '../services/user.service'
