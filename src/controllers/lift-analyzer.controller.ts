@@ -1,9 +1,15 @@
-import { Request, Response, NextFunction } from 'express'
-import liftAnalyzerService from '../services/lift-analyzer.service'
-import createResponse from '../utils/createResponse'
 import { StatusCodes } from 'http-status-codes'
 
-export const getLiftAnalyzer = async (req: Request, res: Response, next: NextFunction) => {
+import liftAnalyzerService from '../services/lift-analyzer.service'
+import createResponse from '../utils/createResponse'
+
+import type { NextFunction, Request, Response } from 'express'
+
+export const getLiftAnalyzer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const details = await liftAnalyzerService.getServiceDetails()
     const health = await liftAnalyzerService.getHealth()

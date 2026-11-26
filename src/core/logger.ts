@@ -1,5 +1,5 @@
-import winston from 'winston'
 import morgan from 'morgan'
+import winston from 'winston'
 
 const devFormat = winston.format.combine(
   winston.format.timestamp({ format: 'HH:mm:ss' }),
@@ -31,4 +31,4 @@ const httpLogger = morgan('dev', {
   },
 })
 
-export { logger, httpLogger }
+export { httpLogger, logger }

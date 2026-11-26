@@ -1,14 +1,24 @@
-import { Request, Response, NextFunction } from 'express'
-import createResponse from '../utils/createResponse'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
-import authService from '../services/auth.service'
-import NotFoundError from '../errors/NotFoundError'
-import UnauthorizedError from '../errors/UnauthorizedError'
-import AppError from '../errors/AppError'
+import { StatusCodes } from 'http-status-codes'
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+import AppError from '../errors/AppError'
+import authService from '../services/auth.service'
+import createResponse from '../utils/createResponse'
+
+import type { TypedRequest } from '../types/express'
+import type { NextFunction, Response } from 'express'
+
+interface LoginBody {
+  email: string
+  password: string
+}
+export const login = async (
+  req: TypedRequest<LoginBody>,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
-    const { email, password } = req.body
+    const { email } = req.body
+    const { password } = req.body
     if (!email || !password)
       return createResponse(res, StatusCodes.BAD_REQUEST, 'email and password is required')
     const token = await authService.login(email, password)
