@@ -10,14 +10,14 @@ const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      minlength: 5,
-      maxlength: 30,
-      required: true,
+      minlength: [5, 'Name must be at least 5 characters long'],
+      maxlength: [30, 'Name must be at most 30 characters long'],
+      required: [true, 'Name is required'],
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, 'Email is required'],
+      unique: [true, 'Email already exists'],
       lowercase: true,
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'],
