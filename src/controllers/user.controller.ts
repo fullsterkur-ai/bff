@@ -4,6 +4,7 @@ import createResponse from '../utils/createResponse'
 import { StatusCodes } from 'http-status-codes'
 import userService from '../services/user.service'
 import { User } from '../models/user.model'
+import { getValidationError } from '../utils/getValidationError'
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,6 +23,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const user = await userService.createUser(new User({ name, email, password }))
     return createResponse(res, StatusCodes.OK, { user })
   } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError)
+      return createResponse(res, StatusCodes.BAD_REQUEST, getValidationError(error))
     next(error)
   }
 }
