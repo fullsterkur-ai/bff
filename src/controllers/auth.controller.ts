@@ -4,6 +4,7 @@ import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import authService from '../services/auth.service'
 import NotFoundError from '../errors/NotFoundError'
 import UnauthorizedError from '../errors/UnauthorizedError'
+import AppError from '../errors/AppError'
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,10 +14,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const token = await authService.login(email, password)
     return createResponse(res, StatusCodes.OK, { token, type: 'Bearer' })
   } catch (error) {
-    if (error instanceof NotFoundError)
+    if (error instanceof AppError)
       return createResponse(res, StatusCodes.UNAUTHORIZED, 'Invalid credentials')
-    if (error instanceof UnauthorizedError)
-      return createResponse(res, StatusCodes.UNAUTHORIZED, ReasonPhrases.UNAUTHORIZED)
     next(error)
   }
 }
