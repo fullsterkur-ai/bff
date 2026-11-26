@@ -9,6 +9,7 @@ import NotImplementedError from './errors/NotImplementedError'
 
 import userRouter from './routes/user.route'
 import authRouter from './routes/auth.route'
+import liftAnalyzerRouter from './routes/lift-analyzer.route'
 
 const app = express()
 
@@ -26,6 +27,7 @@ app.get('/', (_req: Request, res: Response) =>
 
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
+app.use('/training/analyzer', liftAnalyzerRouter)
 
 app.use((_req: Request, res: Response, _next: NextFunction) =>
   createResponse(res, StatusCodes.NOT_FOUND, 'Route not found'),
