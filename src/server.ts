@@ -1,16 +1,18 @@
-import 'dotenv/config'
-import os from 'os'
-import type { NextFunction, Request, Response } from 'express'
-import express from 'express'
 import cors from 'cors'
-import { logger, httpLogger } from './core/logger'
-import createResponse from './utils/createResponse'
+import express from 'express'
 import { StatusCodes } from 'http-status-codes'
-import NotImplementedError from './errors/NotImplementedError'
+import os from 'os'
 
-import userRouter from './routes/user.route'
+import { httpLogger, logger } from './core/logger'
+import NotImplementedError from './errors/NotImplementedError'
 import authRouter from './routes/auth.route'
 import liftAnalyzerRouter from './routes/lift-analyzer.route'
+import userRouter from './routes/user.route'
+import createResponse from './utils/createResponse'
+
+import type { NextFunction, Request, Response } from 'express'
+
+import 'dotenv/config'
 
 const app = express()
 
@@ -42,15 +44,21 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 })
 
 const start = async (): Promise<void> => {
-  const SERVER_PORT = process.env.SERVER_PORT
+  const { SERVER_PORT } = process.env
+  if (!SERVER_PORT) throw new Error('SERVER_PORT is not defined')
 
-  logger.info('Starting server...')
-  app.listen(SERVER_PORT, () => {
-    const networkInterfaces = os.networkInterfaces()
-    const address = networkInterfaces.wlo1?.[0]?.address
-    logger.info('Server listening on')
-    logger.info(`\tLocal:\thttp://127.0.0.1:${SERVER_PORT}`)
-    if (address) logger.info(`\tIP:\thttp://${address}:${SERVER_PORT}`)
+  await new Promise<void>((resolve, reject) => {
+    const server = app.listen(SERVER_PORT, () => {
+      const address = Object.values(os.networkInterfaces())
+        .flat()
+        .find((iface) => iface?.family === 'IPv4' && !iface.internal)?.address
+
+      logger.info(`\tLocal:\thttp://127.0.0.1:${SERVER_PORT}`)
+      if (address) logger.info(`\tIP:\thttp://${address}:${SERVER_PORT}`)
+      resolve()
+    })
+
+    server.on('error', reject)
   })
 }
 

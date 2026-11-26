@@ -1,13 +1,15 @@
-import type { Request, Response, NextFunction } from 'express'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
-import createResponse from '../utils/createResponse'
-import { StatusCodes, ReasonPhrases } from 'http-status-codes'
-import type { AuthUser } from '../types/express'
+
 import { UserRole } from '../models/user.model'
 import authService from '../services/auth.service'
+import createResponse from '../utils/createResponse'
 
-export const protect = async (req: Request, res: Response, next: NextFunction) => {
-  const authorization = req.headers.authorization
+import type { AuthUser } from '../types/express'
+import type { NextFunction, Request, RequestHandler, Response } from 'express'
+
+export const protect = (req: Request, res: Response, next: NextFunction): Response | void => {
+  const { authorization } = req.headers
   if (!authorization)
     return createResponse(res, StatusCodes.UNAUTHORIZED, ReasonPhrases.UNAUTHORIZED)
 
@@ -26,8 +28,8 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
-export const requireRoles = (roles: UserRole[], mode: 'all' | 'one' = 'all') => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const requireRoles = (roles: UserRole[], mode: 'all' | 'one' = 'all'): RequestHandler => {
+  return (req: Request, res: Response, next: NextFunction): Response | void => {
     if (!req.user) return createResponse(res, StatusCodes.UNAUTHORIZED, ReasonPhrases.UNAUTHORIZED)
 
     const userRoles = req.user.roles ?? []
@@ -44,6 +46,6 @@ export const requireRoles = (roles: UserRole[], mode: 'all' | 'one' = 'all') => 
 }
 
 // utility function
-export const adminProtected = (req: Request, res: Response, next: NextFunction) => {
-  return requireRoles([UserRole.ADMIN])(req, res, next)
+export const adminProtected: RequestHandler = (req, res, next): void => {
+  void requireRoles([UserRole.ADMIN])(req, res, next)
 }

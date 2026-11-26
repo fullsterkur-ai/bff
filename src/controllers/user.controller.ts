@@ -1,12 +1,19 @@
-import mongoose from 'mongoose'
-import type { Request, Response, NextFunction } from 'express'
-import createResponse from '../utils/createResponse'
 import { StatusCodes } from 'http-status-codes'
-import userService from '../services/user.service'
+import mongoose from 'mongoose'
+
 import { User } from '../models/user.model'
+import userService from '../services/user.service'
+import createResponse from '../utils/createResponse'
 import { getValidationError } from '../utils/getValidationError'
 
-export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+import type { TypedRequest } from '../types/express'
+import type { NextFunction, Request, Response } from 'express'
+
+export const getUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const users = await userService.getUsers()
     return createResponse(res, StatusCodes.OK, { users })
@@ -15,7 +22,17 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+interface CreateUserBody {
+  name: string
+  email: string
+  password: string
+}
+
+export const createUser = async (
+  req: TypedRequest<CreateUserBody>,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { name, email, password } = req.body
     if (!name || !email || !password)
@@ -29,7 +46,11 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const id = req.params.id.toString()
     if (!mongoose.isValidObjectId(id))
@@ -44,7 +65,11 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
-export const getMe = async (req: Request, res: Response, next: NextFunction) => {
+export const getMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const id = req.user?.id.toString()
     const user = await userService.getUserById(new mongoose.mongo.ObjectId(id))
@@ -56,7 +81,11 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const id = req.params.id.toString()
     if (!mongoose.isValidObjectId(id))
@@ -70,7 +99,11 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const id = req.user?.id.toString()
     const user = await userService.updateUserById(new mongoose.mongo.ObjectId(id))
@@ -81,7 +114,11 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const id = req.params.id.toString()
     if (!mongoose.isValidObjectId(id))
@@ -95,7 +132,11 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const deleteMe = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const id = req.user?.id.toString()
     const user = await userService.deleteUserById(new mongoose.mongo.ObjectId(id))
